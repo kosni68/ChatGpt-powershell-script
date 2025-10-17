@@ -30,3 +30,14 @@ Langage : C++
 OS : Windows
 Carte cible : ESP32 (M5stackTab5)
 Compilation : via PlatformIO avec platformio.ini configuré
+
+
+
+
+$dirs = @(
+  "C:\Users\Projects\grbl_controller_esp32"
+)
+$ext = ".txt", ".cpp", ".c", ".h", ".hpp", ".ini"
+
+.\output_Files.ps1 -Directory $dirs -Extensions $ext | Set-Clipboard
+
