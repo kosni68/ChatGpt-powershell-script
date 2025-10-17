@@ -44,7 +44,7 @@ Tu optimises le code pour :
 ## 🧩 Environnement
 - **IDE** : Visual Studio Code  
 - **Framework** : Arduino (sous PlatformIO)  
-- **Langage** : C++17  
+- **Langage** : C++
 - **OS** : Windows  
 - **Carte cible** : ESP32 (M5Stack Tab5)  
 - **Compilation** : via PlatformIO avec un `platformio.ini` configuré
