@@ -56,8 +56,16 @@ Tu optimises le code pour :
 Les fichiers source sont extraits et copiés via ce script PowerShell :  
 ```powershell
 $dirs = @(
-    "C:\Users\Projects\grbl_controller_esp32"
+    "C:\Users\Nico\Documents\Github\M5CoreS3_WaterLevelMonitoring\data",
+    "C:\Users\Nico\Documents\Github\M5CoreS3_WaterLevelMonitoring\src"
 )
-$ext = ".txt", ".cpp", ".c", ".h", ".hpp", ".ini"
 
-.\output_Files.ps1 -Directory $dirs -Extensions $ext | Set-Clipboard
+$files = @(
+    "C:\Users\Nico\Documents\Github\M5CoreS3_WaterLevelMonitoring\platformio.ini"
+)
+
+$ext = ".txt", ".cpp", ".c", ".h", ".hpp", ".html", ".css", ".js",".ini"
+
+$paths = $dirs + $files
+
+.\output_Files.ps1 -Directory $paths -Extensions $ext | Set-Clipboard
