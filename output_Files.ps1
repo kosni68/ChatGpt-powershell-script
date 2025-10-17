@@ -1,21 +1,21 @@
 <#
 .SYNOPSIS
-    Recursively reads files from given directories that match specified file extensions,
-    excluding files located in folders whose names contain any of the specified exclude patterns.
+    Reads content from files in given directories and/or individual files,
+    matching specified extensions (for directories),
+    and excluding folders whose names contain any of the specified patterns.
 #>
 
 [CmdletBinding()]
 param(
-    # ⬇⬇⬇ 1) Autoriser plusieurs dossiers
     [Parameter(Mandatory = $true, ValueFromPipeline, ValueFromPipelineByPropertyName)]
     [Alias('Path')]
     [ValidateScript({ 
-        if (-not (Test-Path -Path $_ -PathType Container)) {
-            throw "Directory '$_' does not exist."
+        if (-not (Test-Path -Path $_)) {
+            throw "Path '$_' does not exist."
         }
         $true
     })]
-    [string[]]$Directory,   # ⬅⬅⬅ passé en [string[]]
+    [string[]]$Directory,   # Peut contenir des fichiers OU dossiers
 
     [Parameter(Mandatory = $true)]
     [string[]]$Extensions,
@@ -47,17 +47,34 @@ function Write-FileDetails {
     Write-Output "========================"
 }
 
-# ⬇⬇⬇ 2) Ici, -Path accepte $Directory comme tableau sans autre changement
-Get-ChildItem -Path $Directory -Recurse -File |
-    Where-Object {
-        $exclude = $false
-        foreach ($pattern in $ExcludeFolderPattern) {
-            if ($_.DirectoryName.Contains($pattern)) {  # case-sensitive comme dans tes commentaires
-                $exclude = $true
-                break
-            }
-        }
-        -not $exclude
-    } |
-    Where-Object { $Extensions -contains $_.Extension } |  # -contains est insensible à la casse
-    ForEach-Object { Write-FileDetails -FileInfo $_ }
+# --- Parcours des entrées ---
+$allFiles = @()
+
+foreach ($path in $Directory) {
+    if (Test-Path $path -PathType Container) {
+        # C’est un dossier → on liste les fichiers selon extensions
+        $filesInDir = Get-ChildItem -Path $path -Recurse -File |
+            Where-Object {
+                $exclude = $false
+                foreach ($pattern in $ExcludeFolderPattern) {
+                    if ($_.DirectoryName.Contains($pattern)) {
+                        $exclude = $true
+                        break
+                    }
+                }
+                -not $exclude
+            } |
+            Where-Object { $Extensions -contains $_.Extension }
+
+        $allFiles += $filesInDir
+    }
+    elseif (Test-Path $path -PathType Leaf) {
+        # C’est un fichier individuel
+        $allFiles += Get-Item $path
+    }
+}
+
+# --- Lecture et affichage des fichiers ---
+foreach ($file in $allFiles) {
+    Write-FileDetails -FileInfo $file
+}
