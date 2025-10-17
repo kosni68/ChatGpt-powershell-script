@@ -32,7 +32,7 @@ Carte cible : ESP32 (M5stackTab5)
 Compilation : via PlatformIO avec platformio.ini configuré
 
 
-
+# Script 
 
 $dirs = @(
   "C:\Users\Projects\grbl_controller_esp32"
